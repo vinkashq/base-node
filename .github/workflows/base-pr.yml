@@ -5,13 +5,14 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   base-pr:
     if: github.repository != 'vinkashq/base'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -27,6 +28,10 @@ jobs:
           git push origin base
       - name: Create PR
         run: |
-          gh pr create --title "Merge base changes" --body "Auto PR for Upstream Changes" --base main --head base
+          gh pr view base --base main || gh pr create \
+            --title "Merge base changes" \
+            --body "Auto PR for Upstream Changes" \
+            --base main \
+            --head base
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
