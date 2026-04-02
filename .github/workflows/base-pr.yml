@@ -45,3 +45,5 @@ jobs:
           else
             echo "No changes to merge."
           fi
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
