@@ -28,10 +28,14 @@ jobs:
           git push origin base
       - name: Create PR
         run: |
-          gh pr view base --base main || gh pr create \
-            --title "Merge base changes" \
-            --body "Auto PR for Upstream Changes" \
-            --base main \
-            --head base
+          if [ $(git rev-parse base) != $(git rev-parse origin/main) ]; then
+            gh pr view base --base main || gh pr create \
+              --title "Merge base changes" \
+              --body "Auto PR for Upstream Changes" \
+              --base main \
+              --head base
+          else
+            echo "No changes to merge."
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
